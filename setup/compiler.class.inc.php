@@ -1156,26 +1156,28 @@ EOF
 
 		$sEvents = '';
 		$sMethods = '';
-		if ($oEvents = $oClass->GetOptionalElement('hooks'))
+		if ($oEvents = $oClass->GetOptionalElement('events'))
 		{
-			foreach($oEvents->getElementsByTagName('hook') as $oEvent)
+			foreach($oEvents->getElementsByTagName('event') as $oEvent)
 			{
 				/** @var \DOMElement $oEvent */
-				$sEventId = $oEvent->getAttribute('id');
-				$oEventName = $oEvent->GetUniqueElement('event_name', true);
-				$sEventName = $oEventName->GetText();
-				$oListener = $oEvent->GetUniqueElement('listener', true);
-				$sListener = $oListener->GetText();
-				if (strpos($sListener, '::') === false)
+				$sEventName = $oEvent->getAttribute('id');
+				foreach ($oEvent->getElementsByTagName('hook') as $oHook)
 				{
-					$sEventListener = 'array($this, \''.$sListener.'\')';
+					$sHookId = $oHook->getAttribute('id');
+					$oListener = $oHook->GetUniqueElement('listener', true);
+					$sListener = $oListener->GetText();
+					if (strpos($sListener, '::') === false)
+					{
+						$sEventListener = 'array($this, \''.$sListener.'\')';
+					}
+					else
+					{
+						$sEventListener = "'{$sListener}'";
+					}
+					$sEventPriority = (float)($oHook->GetChildText('priority', '0'));
+					$sEvents .= "\n		Combodo\iTop\Service\Event::Register(\"$sEventName\", $sEventListener, \$this->m_sEventUniqId, '$sHookId', $sEventPriority);";
 				}
-				else
-				{
-					$sEventListener = "'{$sListener}'";
-				}
-				$sEventPriority = (float)($oEvent->GetChildText('priority', '0'));
-				$sEvents .= "\n		Combodo\iTop\Service\Event::Register(\"$sEventName\", $sEventListener, \$this->m_sEventUniqId, '$sEventId', $sEventPriority);";
 			}
 		}
 
