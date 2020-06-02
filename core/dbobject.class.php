@@ -5539,12 +5539,14 @@ abstract class DBObject implements iDisplay
 
 	/**
 	 * @param $sEvent
+	 * @param array $aEventData
 	 *
-	 * @throws \Exception
+	 * @throws \CoreException
 	 */
-	protected function FireEvent($sEvent)
+	protected function FireEvent($sEvent, $aEventData = array())
 	{
-		$aEventData = array('debug_info' => 'from: '.get_class($this).':'.$this->GetKey(), 'object' => $this);
+		$aEventData['debug_info'] = 'from: '.get_class($this).':'.$this->GetKey();
+		$aEventData['object'] = $this;
 		$aEventSources = array($this->m_sEventUniqId);
 		foreach (MetaModel::EnumParentClasses(get_class($this), ENUM_PARENT_CLASSES_ALL, false) as $sClass)
 		{

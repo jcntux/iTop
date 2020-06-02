@@ -26,4 +26,6 @@ class EventName
 	const AFTER_DELETE = 'AfterDelete';
 	const BEFORE_APPLY_STIMULUS = 'BeforeApplyStimulus';
 	const AFTER_APPLY_STIMULUS = 'AfterApplyStimulus';
+	const ON_CHECK_TO_WRITE = 'OnCheckToWrite';
+	const ON_CHECK_TO_DELETE = 'OnCheckToDelete';
 }
