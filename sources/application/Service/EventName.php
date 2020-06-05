@@ -13,9 +13,6 @@ class EventName
 	// OrmDocument
 	const DOWNLOAD_DOCUMENT = 'DownloadDocument';
 
-	// GUI
-	const OBJECT_DETAILS = 'ObjectDetails';
-
 	// DBObject
 	const DB_OBJECT_LOADED = 'DBObjectLoaded';
 	const DB_OBJECT_RELOAD = 'DBObjectReload';
@@ -31,4 +28,5 @@ class EventName
 	const AFTER_APPLY_STIMULUS = 'AfterApplyStimulus';
 	const ON_CHECK_TO_WRITE = 'OnCheckToWrite';
 	const ON_CHECK_TO_DELETE = 'OnCheckToDelete';
+	const OBJECT_DETAILS = 'ObjectDetails';
 }

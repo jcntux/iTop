@@ -5543,7 +5543,7 @@ abstract class DBObject implements iDisplay
 	 *
 	 * @throws \CoreException
 	 */
-	protected function FireEvent($sEvent, $aEventData = array())
+	public function FireEvent($sEvent, $aEventData = array())
 	{
 		$aEventData['debug_info'] = 'from: '.get_class($this).':'.$this->GetKey();
 		$aEventData['object'] = $this;
