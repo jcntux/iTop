@@ -72,16 +72,16 @@ class Event
 	 * Fire an event. Call all the callbacks registered for this event.
 	 *
 	 * @param string $sEvent event to trigger
-	 * @param string|array $sEventSource source of the event
+	 * @param string|array $mEventSource source of the event
 	 * @param mixed|null $mEventData event related data
 	 *
 	 * @throws \Exception from the callback
 	 */
-	public static function FireEvent($sEvent, $sEventSource = null, $mEventData = null)
+	public static function FireEvent($sEvent, $mEventSource = null, $mEventData = null)
 	{
 		$oKPI = new ExecutionKPI();
 		$sSource = isset($mEventData['debug_info']) ? " {$mEventData['debug_info']}" : '';
-		$sEventName = "$sEvent:".self::GetSourcesAsString($sEventSource);
+		$sEventName = "$sEvent:".self::GetSourcesAsString($mEventSource);
 		IssueLog::Trace("Fire event '$sEventName'$sSource", LOG_EVENT_SERVICE_CHANNEL);
 		if (!isset(self::$aEvents[$sEvent]))
 		{
@@ -92,7 +92,7 @@ class Event
 
 		foreach (self::$aEvents[$sEvent] as $aEventCallback)
 		{
-			if (!self::MatchEventSource($aEventCallback['source'], $sEventSource))
+			if (!self::MatchEventSource($aEventCallback['source'], $mEventSource))
 			{
 				continue;
 			}
@@ -102,7 +102,7 @@ class Event
 			{
 				if (is_callable($aEventCallback['callback']))
 				{
-					call_user_func($aEventCallback['callback'], new EventData($sEvent, $sEventSource, $mEventData, $aEventCallback['user_data']));
+					call_user_func($aEventCallback['callback'], new EventData($sEvent, $mEventSource, $mEventData, $aEventCallback['user_data']));
 				}
 				else
 				{

@@ -13,6 +13,9 @@ class EventName
 	// OrmDocument
 	const DOWNLOAD_DOCUMENT = 'DownloadDocument';
 
+	// GUI
+	const OBJECT_DETAILS = 'ObjectDetails';
+
 	// DBObject
 	const DB_OBJECT_LOADED = 'DBObjectLoaded';
 	const DB_OBJECT_RELOAD = 'DBObjectReload';
