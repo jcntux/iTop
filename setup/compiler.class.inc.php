@@ -1176,7 +1176,7 @@ EOF
 						$sEventListener = "'{$sListener}'";
 					}
 					$sEventPriority = (float)($oHook->GetChildText('priority', '0'));
-					$sEvents .= "\n		Combodo\iTop\Service\Event::Register(\"$sEventName\", $sEventListener, \$this->m_sEventUniqId, '$sHookId', $sEventPriority);";
+					$sEvents .= "\n		Combodo\iTop\Service\Event::Register(\"$sEventName\", $sEventListener, \$this->m_sEventUniqId, null, $sEventPriority);";
 				}
 			}
 		}

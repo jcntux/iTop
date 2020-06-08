@@ -5,6 +5,7 @@ namespace Combodo\iTop\Test\UnitTest\Service;
 use Combodo\iTop\Service\Event;
 use Combodo\iTop\Service\EventData;
 use Combodo\iTop\Test\UnitTest\ItopTestCase;
+use ContextTag;
 use TypeError;
 
 /**
@@ -146,12 +147,10 @@ class EventTest extends ItopTestCase
 	public function testData()
 	{
 		$oReceiver = new TestEventReceiver();
-		Event::Register('event1', array($oReceiver, 'OnEventWithData'), '', 'User Data Static');
-		Event::Register('event1', array($oReceiver, 'OnEventWithData'), '', $oReceiver);
-		Event::FireEvent('event1', '', 'Event Data 1');
+		Event::Register('event1', array($oReceiver, 'OnEventWithData'), '');
+		Event::Register('event1', array($oReceiver, 'OnEventWithData'), '');
+		Event::FireEvent('event1', '', array('text' => 'Event Data 1'));
 		$this->assertEquals(2, self::$iEventCalls);
-		Event::FireEvent('event1', '', array('text' => 'Event Data 2'));
-		$this->assertEquals(4, self::$iEventCalls);
 	}
 
 	public function testPriority()
@@ -169,6 +168,17 @@ class EventTest extends ItopTestCase
 		$this->assertEquals(4, self::$iEventCalls);
 	}
 
+	public function testContext()
+	{
+		$oReceiver = new TestEventReceiver();
+		Event::Register('event1', array($oReceiver, 'OnEvent1'), '', null, 0);
+		Event::Register('event1', array($oReceiver, 'OnEvent2'), '', 'test_context', 1);
+		Event::FireEvent('event1');
+		$this->assertEquals(1, self::$iEventCalls);
+		ContextTag::AddContext('test_context');
+		Event::FireEvent('event1');
+		$this->assertEquals(3, self::$iEventCalls);
+	}
 
 	public function testEventSource()
 	{
@@ -333,11 +343,9 @@ class TestEventReceiver
 	{
 		$sEvent = $oData->GetEvent();
 		$mEventData = $oData->GetEventData();
-		$mUserData = $oData->GetUserData();
 		$this->Debug(__METHOD__.": received event '{$sEvent}'");
 		EventTest::IncrementCallCount();
 		$this->Debug($mEventData);
-		$this->Debug($mUserData);
 	}
 
 	// Event callbacks

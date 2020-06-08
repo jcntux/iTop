@@ -18,7 +18,6 @@ class EventData
 	private $sEvent;
 	private $sEventSource;
 	private $mEventData;
-	private $mUserData;
 
 	/**
 	 * EventServiceData constructor.
@@ -28,11 +27,10 @@ class EventData
 	 * @param $mEventData
 	 * @param $mUserData
 	 */
-	public function __construct($sEvent, $sEventSource, $mEventData, $mUserData)
+	public function __construct($sEvent, $sEventSource, $mEventData)
 	{
 		$this->sEvent = $sEvent;
 		$this->mEventData = $mEventData;
-		$this->mUserData = $mUserData;
 		$this->sEventSource = $sEventSource;
 	}
 

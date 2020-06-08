@@ -7,6 +7,7 @@
 namespace Combodo\iTop\Service;
 
 use Closure;
+use ContextTag;
 use Exception;
 use ExecutionKPI;
 use IssueLog;
@@ -24,14 +25,14 @@ class Event
 	 * @param string $sEvent corresponding event
 	 * @param callable $callback The callback to call
 	 * @param string|array $sEventSource event filtering depending on the source of the event
-	 * @param mixed|null $mUserData Optional user data
+	 * @param array|string|null $context context filter
 	 * @param float $fPriority optional priority for callback order
 	 *
 	 * @return string Id of the registration (used for unregistering)
 	 *
 	 * @throws \Exception
 	 */
-	public static function Register($sEvent, callable $callback, $sEventSource = null, $mUserData = null, $fPriority = 0.0)
+	public static function Register($sEvent, callable $callback, $sEventSource = null, $context = null, $fPriority = 0.0)
 	{
 		is_callable($callback, false, $sName);
 
@@ -42,7 +43,7 @@ class Event
 			'callback' => $callback,
 			'source' => $sEventSource,
 			'name' => $sName,
-			'user_data' => $mUserData,
+			'context' => $context,
 			'priority' => $fPriority,
 		);
 		usort($aEventCallbacks, function ($a, $b) {
@@ -72,16 +73,16 @@ class Event
 	 * Fire an event. Call all the callbacks registered for this event.
 	 *
 	 * @param string $sEvent event to trigger
-	 * @param string|array $mEventSource source of the event
-	 * @param mixed|null $mEventData event related data
+	 * @param string|array $eventSource source of the event
+	 * @param array $aEventData event related data
 	 *
 	 * @throws \Exception from the callback
 	 */
-	public static function FireEvent($sEvent, $mEventSource = null, $mEventData = null)
+	public static function FireEvent($sEvent, $eventSource = null, $aEventData = array())
 	{
 		$oKPI = new ExecutionKPI();
-		$sSource = isset($mEventData['debug_info']) ? " {$mEventData['debug_info']}" : '';
-		$sEventName = "$sEvent:".self::GetSourcesAsString($mEventSource);
+		$sSource = isset($aEventData['debug_info']) ? " {$aEventData['debug_info']}" : '';
+		$sEventName = "$sEvent:".self::GetSourcesAsString($eventSource);
 		IssueLog::Trace("Fire event '$sEventName'$sSource", LOG_EVENT_SERVICE_CHANNEL);
 		if (!isset(self::$aEvents[$sEvent]))
 		{
@@ -92,7 +93,11 @@ class Event
 
 		foreach (self::$aEvents[$sEvent] as $aEventCallback)
 		{
-			if (!self::MatchEventSource($aEventCallback['source'], $mEventSource))
+			if (!self::MatchEventSource($aEventCallback['source'], $eventSource))
+			{
+				continue;
+			}
+			if (!self::MatchContext($aEventCallback['context']))
 			{
 				continue;
 			}
@@ -102,7 +107,7 @@ class Event
 			{
 				if (is_callable($aEventCallback['callback']))
 				{
-					call_user_func($aEventCallback['callback'], new EventData($sEvent, $mEventSource, $mEventData, $aEventCallback['user_data']));
+					call_user_func($aEventCallback['callback'], new EventData($sEvent, $eventSource, $aEventData));
 				}
 				else
 				{
@@ -169,6 +174,34 @@ class Event
 			}
 		}
 		// no match
+		return false;
+	}
+
+	private static function MatchContext($registeredContext)
+	{
+		if (empty($registeredContext))
+		{
+			return true;
+		}
+		if (is_string($registeredContext))
+		{
+			$aContexts = array($registeredContext);
+		}
+		elseif (is_array($registeredContext))
+		{
+			$aContexts = $registeredContext;
+		}
+		else
+		{
+			return false;
+		}
+		foreach ($aContexts as $sContext)
+		{
+			if (ContextTag::Check($sContext))
+			{
+				return true;
+			}
+		}
 		return false;
 	}
 
