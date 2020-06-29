@@ -1156,27 +1156,49 @@ EOF
 
 		$sEvents = '';
 		$sMethods = '';
-		if ($oEvents = $oClass->GetOptionalElement('events'))
+		$oHooks = $oClass->GetOptionalElement('hooks');
+		if ($oHooks)
 		{
-			foreach($oEvents->getElementsByTagName('event') as $oEvent)
+			foreach($oHooks->getElementsByTagName('hook') as $oHook)
 			{
-				/** @var \DOMElement $oEvent */
-				$sEventName = $oEvent->getAttribute('id');
-				foreach ($oEvent->getElementsByTagName('hook') as $oHook)
+				/** @var \DOMElement $oHook */
+				$sEventName = $oHook->getAttribute('id');
+				$oListeners = $oHook->GetOptionalElement('listeners');
+				if ($oListeners)
 				{
-					$sHookId = $oHook->getAttribute('id');
-					$oListener = $oHook->GetUniqueElement('listener', true);
-					$sListener = $oListener->GetText();
-					if (strpos($sListener, '::') === false)
+					foreach ($oListeners->getElementsByTagName('listener') as $oListener)
 					{
-						$sEventListener = 'array($this, \''.$sListener.'\')';
+						/** @var \DOMElement $oListener */
+						$sListenerId = $oListener->getAttribute('id');
+						$oCallback = $oListener->GetUniqueElement('callback', false);
+						if (is_object($oCallback))
+						{
+							$sCallback = $oCallback->GetText();
+						}
+						else
+						{
+							$oExecute = $oListener->GetUniqueElement('execute', true);
+							$sExecute = trim($oExecute->GetText());
+							$sCallback = "EventHook_{$sEventName}_{$sListenerId}";
+							$sCallbackFct = preg_replace('@^function\s*\(@', "public function {$sCallback}(", $sExecute);
+							if ($sExecute == $sCallbackFct)
+							{
+								throw new DOMFormatException("Malformed tag <execute> in hook: $sEventName linstener: $sListenerId");
+							}
+							$sMethods .= "\n    {$sCallbackFct}\n\n";
+						}
+						if (strpos($sCallback, '::') === false)
+						{
+							$sEventListener = 'array($this, \''.$sCallback.'\')';
+						}
+						else
+						{
+							$sEventListener = "'{$sCallback}'";
+						}
+
+						$sListenerPriority = (float)($oListener->GetChildText('priority', '0'));
+						$sEvents .= "\n		Combodo\iTop\Service\Event::Register(\"$sEventName\", $sEventListener, \$this->m_sEventUniqId, \"$sListenerId\", null, $sListenerPriority);";
 					}
-					else
-					{
-						$sEventListener = "'{$sListener}'";
-					}
-					$sEventPriority = (float)($oHook->GetChildText('priority', '0'));
-					$sEvents .= "\n		Combodo\iTop\Service\Event::Register(\"$sEventName\", $sEventListener, \$this->m_sEventUniqId, null, $sEventPriority);";
 				}
 			}
 		}

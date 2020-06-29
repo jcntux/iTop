@@ -18,6 +18,7 @@ class EventData
 	private $sEvent;
 	private $sEventSource;
 	private $mEventData;
+	private $mCallbackData;
 
 	/**
 	 * EventServiceData constructor.
@@ -25,13 +26,14 @@ class EventData
 	 * @param $sEvent
 	 * @param $sEventSource
 	 * @param $mEventData
-	 * @param $mUserData
+	 * @param $mCallbackData
 	 */
-	public function __construct($sEvent, $sEventSource, $mEventData)
+	public function __construct($sEvent, $sEventSource, $mEventData, $mCallbackData)
 	{
 		$this->sEvent = $sEvent;
 		$this->mEventData = $mEventData;
 		$this->sEventSource = $sEventSource;
+		$this->mCallbackData = $mCallbackData;
 	}
 
 	/**
@@ -61,8 +63,8 @@ class EventData
 	/**
 	 * @return mixed
 	 */
-	public function GetUserData()
+	public function GetCallbackData()
 	{
-		return $this->mUserData;
+		return $this->mCallbackData;
 	}
 }

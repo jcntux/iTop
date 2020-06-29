@@ -25,6 +25,7 @@ class Event
 	 * @param string $sEvent corresponding event
 	 * @param callable $callback The callback to call
 	 * @param string|array $sEventSource event filtering depending on the source of the event
+	 * @param mixed|null $callbackData optional data given by the registrar to the callback
 	 * @param array|string|null $context context filter
 	 * @param float $fPriority optional priority for callback order
 	 *
@@ -32,7 +33,7 @@ class Event
 	 *
 	 * @throws \Exception
 	 */
-	public static function Register($sEvent, callable $callback, $sEventSource = null, $context = null, $fPriority = 0.0)
+	public static function Register($sEvent, callable $callback, $sEventSource = null, $callbackData = null, $context = null, $fPriority = 0.0)
 	{
 		is_callable($callback, false, $sName);
 
@@ -43,6 +44,7 @@ class Event
 			'callback' => $callback,
 			'source' => $sEventSource,
 			'name' => $sName,
+			'data' => $callbackData,
 			'context' => $context,
 			'priority' => $fPriority,
 		);
@@ -107,7 +109,7 @@ class Event
 			{
 				if (is_callable($aEventCallback['callback']))
 				{
-					call_user_func($aEventCallback['callback'], new EventData($sEvent, $eventSource, $aEventData));
+					call_user_func($aEventCallback['callback'], new EventData($sEvent, $eventSource, $aEventData, $aEventCallback['data']));
 				}
 				else
 				{
