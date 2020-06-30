@@ -24,7 +24,7 @@ class Event
 	 *
 	 * @param string $sEvent corresponding event
 	 * @param callable $callback The callback to call
-	 * @param string|array $sEventSource event filtering depending on the source of the event
+	 * @param array|string|null $sEventSource event filtering depending on the source of the event
 	 * @param mixed|null $callbackData optional data given by the registrar to the callback
 	 * @param array|string|null $context context filter
 	 * @param float $fPriority optional priority for callback order

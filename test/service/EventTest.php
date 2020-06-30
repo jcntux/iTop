@@ -156,11 +156,11 @@ class EventTest extends ItopTestCase
 	public function testPriority()
 	{
 		$oReceiver = new TestEventReceiver();
-		Event::Register('event1', array($oReceiver, 'OnEvent1'), '', null, 0);
-		Event::Register('event1', array($oReceiver, 'OnEvent2'), '', null, 1);
+		Event::Register('event1', array($oReceiver, 'OnEvent1'), '', null, null, 0);
+		Event::Register('event1', array($oReceiver, 'OnEvent2'), '', null, null, 1);
 
-		Event::Register('event2', array($oReceiver, 'OnEvent1'), '', null, 1);
-		Event::Register('event2', array($oReceiver, 'OnEvent2'), '', null, 0);
+		Event::Register('event2', array($oReceiver, 'OnEvent1'), '', null, null, 1);
+		Event::Register('event2', array($oReceiver, 'OnEvent2'), '', null, null, 0);
 
 		Event::FireEvent('event1');
 		$this->assertEquals(2, self::$iEventCalls);
@@ -171,8 +171,8 @@ class EventTest extends ItopTestCase
 	public function testContext()
 	{
 		$oReceiver = new TestEventReceiver();
-		Event::Register('event1', array($oReceiver, 'OnEvent1'), '', null, 0);
-		Event::Register('event1', array($oReceiver, 'OnEvent2'), '', 'test_context', 1);
+		Event::Register('event1', array($oReceiver, 'OnEvent1'), '', null, null, 0);
+		Event::Register('event1', array($oReceiver, 'OnEvent2'), '', null, 'test_context', 1);
 		Event::FireEvent('event1');
 		$this->assertEquals(1, self::$iEventCalls);
 		ContextTag::AddContext('test_context');
@@ -183,13 +183,13 @@ class EventTest extends ItopTestCase
 	public function testEventSource()
 	{
 		$oReceiver = new TestEventReceiver();
-		Event::Register('event1', array($oReceiver, 'OnEvent1'), 'A', null, 0);
-		Event::Register('event1', array($oReceiver, 'OnEvent2'), 'A', null, 1);
-		Event::Register('event1', 'Combodo\iTop\Test\UnitTest\Service\TestEventReceiver::OnStaticEvent1', null, null, 2);
+		Event::Register('event1', array($oReceiver, 'OnEvent1'), 'A', null, null, 0);
+		Event::Register('event1', array($oReceiver, 'OnEvent2'), 'A', null, null, 1);
+		Event::Register('event1', 'Combodo\iTop\Test\UnitTest\Service\TestEventReceiver::OnStaticEvent1', null, null, null, 2);
 
-		Event::Register('event2', array($oReceiver, 'OnEvent1'), 'A', null, 1);
-		Event::Register('event2', 'Combodo\iTop\Test\UnitTest\Service\TestEventReceiver::OnStaticEvent1', null, null, 2);
-		Event::Register('event2', array($oReceiver, 'OnEvent2'), 'B', null, 0);
+		Event::Register('event2', array($oReceiver, 'OnEvent1'), 'A', null, null, 1);
+		Event::Register('event2', 'Combodo\iTop\Test\UnitTest\Service\TestEventReceiver::OnStaticEvent1', null, null, null, 2);
+		Event::Register('event2', array($oReceiver, 'OnEvent2'), 'B', null, null, 0);
 
 		Event::FireEvent('event1', 'A');
 		$this->assertEquals(3, self::$iEventCalls);
