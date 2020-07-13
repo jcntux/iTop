@@ -1,19 +1,13 @@
 {
-  "require": {
-    "php": ">=5.6.0",
-    "ext-mysql": "*",
-    "ext-ldap": "*",
-    "ext-mcrypt": "*",
-    "ext-cli": "*",
-    "ext-soap": "*",
-    "ext-json": "*",
-    "ext-zip": "*",
-    "ext-mysqli": "*",
-    "ext-gd": "*"
-  },
-  "config": {
-    "platform": {
-      "php": "5.6.0"
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "config": {
+        "platform": {
+            "php": "7.0"
+        },
+        "vendor-dir": "/opt/repositories/php-env/vendor"
+    },
+    "require": {
+        "phpunit/phpunit": "^6.5"
     }
-  }
 }
